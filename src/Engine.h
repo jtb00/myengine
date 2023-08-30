@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Types.h"
+//#include "Types.h"
+#include <string>
+#include "GraphicsManager.h"
+
+class GraphicsManager;
 
 class Engine {
 public:
-	illengine::GraphicsManager graphics;
+	GraphicsManager graphics;
 
 	Engine();
 	void start();
@@ -15,7 +19,7 @@ public:
 struct GraphicsConfig {
 	int width;
 	int height;
-	illengine::string name;
+	std::string name;
 	bool fs;
 };
 

@@ -4,23 +4,24 @@
 
 //#include "Types.h"
 #include "Engine.h"
+#include "GraphicsManager.h"
 
-using namespace illengine;
+//using namespace illengine;
 
-illengine::Engine::Engine() {
-	GraphicsManager graphics;
+Engine::Engine() {
+	GraphicsManager graphics();
 }
 
-void illengine::Engine::start() {
+void Engine::start() {
 	graphics.start();
 }
 
-void illengine::Engine::shutdown() {
+void Engine::shutdown() {
 	graphics.shutdown();
 }
 
-void illengine::Engine::gameLoop() {
-	const auto step = std::chrono::duration<real>(1.0/60.0);
+void Engine::gameLoop() {
+	const auto step = std::chrono::duration<double>(1.0/60.0);
 	while(true) {
 		const auto start = std::chrono::steady_clock::now();
 		graphics.draw();

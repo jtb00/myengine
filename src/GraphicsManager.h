@@ -1,22 +1,20 @@
 #pragma once
 
-#include "Types.h"
+//#include "Types.h"
+#include <string>
+
+class Engine;
 
 class GraphicsManager {
 public:
 	int windowWidth;
 	int windowHeight;
-	illengine::string windowName;
+	std::string windowName;
 	bool fullscreen;
-	illengine::Engine engine;
+	Engine* engine;
 
-	GraphicsManager(int width, int height, illengine::string name, bool fs) {
-		windowWidth = width;
-		windowHeight = height;
-		windowName = name;
-		fullscreen = fs;
-		engine = globalEngine;
-	}
+	GraphicsManager(void);
+	GraphicsManager(int width, int height, std::string name, bool fs);
 	bool start();
 	void shutdown();
 	void draw();
