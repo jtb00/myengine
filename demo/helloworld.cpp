@@ -1,6 +1,11 @@
 #include <iostream>
 
+#include "../src/Engine.h"
+
+using namespace illengine;
+
 int main( int argc, const char* argv[] ) {
-    std::cout << "Hello, World!\n";
+    globalEngine.start();
+    globalEngine.gameLoop();
     return 0;
 }
