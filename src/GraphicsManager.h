@@ -1,0 +1,28 @@
+#pragma once
+
+#include <string>
+
+#define GLFW_INCLUDE_NONE
+#include "GLFW/glfw3.h"
+
+class Engine;
+
+//handles graphics
+class GraphicsManager {
+public:
+	//width of window in pixels
+	int windowWidth;
+	//height of window in pixels
+	int windowHeight;
+	std::string windowName;
+	bool fullscreen;
+	//pointer to globalEngine
+	Engine* engine;
+	//pointer to window
+	GLFWwindow* window;
+
+	GraphicsManager(int width = 640, int height = 480, std::string name = "Window", bool fs = false);
+	bool start();
+	void shutdown();
+	void draw();
+};
