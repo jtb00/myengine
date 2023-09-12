@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <webgpu/webgpu.h>
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -20,6 +21,11 @@ public:
 	Engine* engine;
 	//pointer to window
 	GLFWwindow* window;
+	WGPUInstance wgpuInstance;
+	WGPUSurface wgpuSurface;
+	WGPUAdapter wgpuAdapter;
+	WGPUDevice wgpuDevice;
+	WGPUQueue wgpuQueue;
 
 	GraphicsManager(int width = 640, int height = 480, std::string name = "Window", bool fs = false);
 	bool start();

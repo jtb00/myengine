@@ -4,6 +4,7 @@
 #include <functional>
 #include "GraphicsManager.h"
 #include "InputManager.h"
+#include "ResourceManager.h"
 
 class GraphicsManager;
 class InputManager;
@@ -14,6 +15,7 @@ class Engine {
 public:
 	GraphicsManager graphics;
 	InputManager input;
+	ResourceManager resources;
 
 	Engine();
 	bool start();

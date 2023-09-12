@@ -5,9 +5,10 @@
 #include "Engine.h"
 #include "GraphicsManager.h"
 #include "InputManager.h"
+#include "ResourceManager.h"
 
 //Creates and initializes Engine components
-Engine::Engine(): graphics(), input() {}
+Engine::Engine(): graphics(), input(), resources() {}
 
 //Signals Engine components to start, returns false if a component fails
 bool Engine::start() {

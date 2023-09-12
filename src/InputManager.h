@@ -5,6 +5,7 @@
 
 enum class Key;
 
+//handles input
 class InputManager {
 	public:
 		//pointer to globalEngine
