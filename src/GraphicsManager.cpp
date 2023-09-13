@@ -2,19 +2,14 @@
 #include <glfw3webgpu.h>
 
 #include "spdlog/spdlog.h"
+#include "glm/glm.hpp"
 
 #include "Engine.h"
 #include "GraphicsManager.h"
 
-template< typename T > const T* to_ptr(const T& val) { return &val; }
+using namespace glm;
 
-GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs) {
-	windowWidth = width;
-	windowHeight = height;
-	windowName = name;
-	fullscreen = fs;
-	engine = &globalEngine;
-}
+template< typename T > const T* to_ptr(const T& val) { return &val; }
 
 // A vertex buffer containing a textured square.
 const struct {
@@ -30,11 +25,43 @@ const struct {
   {  1.0f,   1.0f,    1.0f,  0.0f },
 };
 
+namespace {
+    struct InstanceData {
+        vec3 translation;
+        vec2 scale;
+    };
+
+    struct Uniforms {
+        mat4 projection;
+    };
+
+    struct VertexInput {
+        vec2 position;
+        vec2 texCoords;
+        vec3 translation;
+        float scale;
+    };
+
+    struct VertexOutput {
+        vec4 position;
+        vec2 texCoords;
+    };
+}
+
+GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs) {
+	windowWidth = width;
+	windowHeight = height;
+	windowName = name;
+	fullscreen = fs;
+	engine = &globalEngine;
+}
+
 //Creates window
 bool GraphicsManager::start() {
 	glfwInit();
 	// We don't want GLFW to set up a graphics API.
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	// Create the window.
 	window = glfwCreateWindow( windowWidth, windowHeight, windowName.c_str(), fullscreen ? glfwGetPrimaryMonitor() : 0, 0 );
 	glfwSetWindowAspectRatio( window, windowWidth, windowHeight );
@@ -91,14 +118,53 @@ bool GraphicsManager::start() {
             );
 
     wgpuQueue = wgpuDeviceGetQueue(wgpuDevice);
-    WGPUBuffer vertex_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr(WGPUBufferDescriptor{
+
+    vertex_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr(WGPUBufferDescriptor{
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(vertices)
         }));
+
+    wgpuQueueWriteBuffer(wgpuQueue, vertex_buffer, 0, vertices, sizeof(vertices));
+
+    WGPUTextureFormat swap_chain_format = wgpuSurfaceGetPreferredFormat(wgpuSurface, wgpuAdapter);
+
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    swapchain = wgpuDeviceCreateSwapChain(wgpuDevice, wgpuSurface, to_ptr(WGPUSwapChainDescriptor{
+        .usage = WGPUTextureUsage_RenderAttachment,
+        .format = swap_chain_format,
+        .width = (uint32_t)width,
+        .height = (uint32_t)height
+        }));
+
+    uniform_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr(WGPUBufferDescriptor{
+    .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Uniform,
+    .size = sizeof(Uniforms)
+        }));
+
+    sampler = wgpuDeviceCreateSampler(wgpuDevice, to_ptr(WGPUSamplerDescriptor{
+    .addressModeU = WGPUAddressMode_ClampToEdge,
+    .addressModeV = WGPUAddressMode_ClampToEdge,
+    .magFilter = WGPUFilterMode_Linear,
+    .minFilter = WGPUFilterMode_Linear,
+    .maxAnisotropy = 1
+        }));
+
+    WGPUShaderModuleWGSLDescriptor code_desc = {};
+    code_desc.chain.sType = WGPUSType_ShaderModuleWGSLDescriptor;
+    code_desc.code = source; // The shader source as a `char*`
+    WGPUShaderModuleDescriptor shader_desc = {};
+    shader_desc.nextInChain = &code_desc.chain;
+    WGPUShaderModule shader_module = wgpuDeviceCreateShaderModule(wgpuDevice, &shader_desc);
+
 	return true;
 }
 
 void GraphicsManager::shutdown() {
+    wgpuSamplerRelease(sampler);
+    wgpuBufferRelease(uniform_buffer);
+    wgpuSwapChainRelease(swapchain);
+    wgpuBufferRelease(vertex_buffer);
     wgpuQueueRelease(wgpuQueue);
     wgpuDeviceRelease(wgpuDevice);
     wgpuAdapterRelease(wgpuAdapter);

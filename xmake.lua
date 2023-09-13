@@ -2,6 +2,7 @@ add_rules("mode.debug", "mode.release")
 add_requires("glfw")
 add_requires("spdlog")
 add_requires("wgpu-native", "glfw3webgpu")
+add_requires("glm")
 
 set_policy("build.warning", true) -- show warnings
 set_warnings("all") -- warn about many things
@@ -21,7 +22,8 @@ target("illengine")
 	
 	add_packages("glfw", {public = true})
 	add_packages("spdlog")
-	add_packages("wgpu-native", "glfw3webgpu")
+	add_packages("wgpu-native", "glfw3webgpu", {public = true})
+	add_packages("glm")
 
 target("helloworld")
     set_kind("binary")

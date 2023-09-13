@@ -26,6 +26,10 @@ public:
 	WGPUAdapter wgpuAdapter;
 	WGPUDevice wgpuDevice;
 	WGPUQueue wgpuQueue;
+	WGPUBuffer vertex_buffer;
+	WGPUSwapChain swapchain;
+	WGPUBuffer uniform_buffer;
+	WGPUSampler sampler;
 
 	GraphicsManager(int width = 640, int height = 480, std::string name = "Window", bool fs = false);
 	bool start();
