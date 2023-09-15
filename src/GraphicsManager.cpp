@@ -150,12 +150,142 @@ bool GraphicsManager::start() {
     .maxAnisotropy = 1
         }));
 
+    const char* source = R"(struct Uniforms {
+    projection: mat4x4f,
+};
+
+@group(0) @binding(0) var<uniform> uniforms: Uniforms;
+@group(0) @binding(1) var texSampler: sampler;
+@group(0) @binding(2) var texData: texture_2d<f32>;
+
+struct VertexInput {
+    @location(0) position: vec2f,
+    @location(1) texcoords: vec2f,
+    @location(2) translation: vec3f,
+    @location(3) scale: f32,
+};
+
+struct VertexOutput {
+    @builtin(position) position: vec4f,
+    @location(0) texcoords: vec2f,
+};
+
+@vertex
+fn vertex_shader_main( in: VertexInput ) -> VertexOutput {
+    var out: VertexOutput;
+    out.position = uniforms.projection * vec4f( vec3f( in.scale * in.position, 0.0 ) + in.translation, 1.0 );
+    out.texcoords = in.texcoords;
+    return out;
+}
+
+@fragment
+fn fragment_shader_main( in: VertexOutput ) -> @location(0) vec4f {
+    let color = textureSample( texData, texSampler, in.texcoords ).rgba;
+    return color;
+})";
+
     WGPUShaderModuleWGSLDescriptor code_desc = {};
     code_desc.chain.sType = WGPUSType_ShaderModuleWGSLDescriptor;
     code_desc.code = source; // The shader source as a `char*`
     WGPUShaderModuleDescriptor shader_desc = {};
     shader_desc.nextInChain = &code_desc.chain;
     WGPUShaderModule shader_module = wgpuDeviceCreateShaderModule(wgpuDevice, &shader_desc);
+
+    WGPURenderPipeline pipeline = wgpuDeviceCreateRenderPipeline(wgpuDevice, to_ptr(WGPURenderPipelineDescriptor{
+
+        // Describe the vertex shader inputs
+        .vertex = {
+            .module = shader_module,
+            .entryPoint = "vertex_shader_main",
+            // Vertex attributes.
+            .bufferCount = 2,
+            .buffers = (WGPUVertexBufferLayout[]){
+            // We have one buffer with our per-vertex position and UV data. This data never changes.
+            // Note how the type, byte offset, and stride (bytes between elements) exactly matches our `vertex_buffer`.
+            {
+                .arrayStride = 4 * sizeof(float),
+                .attributeCount = 2,
+                .attributes = (WGPUVertexAttribute[]){
+            // Position x,y are first.
+            {
+                .format = WGPUVertexFormat_Float32x2,
+                .offset = 0,
+                .shaderLocation = 0
+            },
+        // Texture coordinates u,v are second.
+        {
+            .format = WGPUVertexFormat_Float32x2,
+            .offset = 2 * sizeof(float),
+            .shaderLocation = 1
+        }
+        }
+},
+// We will use a second buffer with our per-sprite translation and scale. This data will be set in our draw function.
+{
+    .arrayStride = sizeof(InstanceData),
+    // This data is per-instance. All four vertices will get the same value. Each instance of drawing the vertices will get a different value.
+    // The type, byte offset, and stride (bytes between elements) exactly match the array of `InstanceData` structs we will upload in our draw function.
+    .stepMode = WGPUVertexStepMode_Instance,
+    .attributeCount = 2,
+    .attributes = (WGPUVertexAttribute[]){
+            // Translation as a 3D vector.
+            {
+                .format = WGPUVertexFormat_Float32x3,
+                .offset = offsetof(InstanceData, translation),
+                .shaderLocation = 2
+            },
+        // Scale as a 2D vector for non-uniform scaling.
+        {
+            .format = WGPUVertexFormat_Float32x2,
+            .offset = offsetof(InstanceData, scale),
+            .shaderLocation = 3
+        }
+        }
+}
+}
+},
+
+// Interpret our 4 vertices as a triangle strip
+.primitive = WGPUPrimitiveState{
+    .topology = WGPUPrimitiveTopology_TriangleStrip,
+    },
+
+    // No multi-sampling (1 sample per pixel, all bits on).
+    .multisample = WGPUMultisampleState{
+        .count = 1,
+        .mask = ~0u
+        },
+
+        // Describe the fragment shader and its output
+        .fragment = to_ptr(WGPUFragmentState{
+            .module = shader_module,
+            .entryPoint = "fragment_shader_main",
+
+            // Our fragment shader outputs a single color value per pixel.
+            .targetCount = 1,
+            .targets = (WGPUColorTargetState[]){
+                {
+                    .format = swap_chain_format,
+                    // The images we want to draw may have transparency, so let's turn on alpha blending with over compositing (a*foreground + (1-a)*background).
+                    // This will blend with whatever has already been drawn.
+                    .blend = to_ptr(WGPUBlendState{
+                // Over blending for color
+                .color = {
+                    .operation = WGPUBlendOperation_Add,
+                    .srcFactor = WGPUBlendFactor_SrcAlpha,
+                    .dstFactor = WGPUBlendFactor_OneMinusSrcAlpha
+                    },
+                        // Leave destination alpha alone
+                        .alpha = {
+                            .operation = WGPUBlendOperation_Add,
+                            .srcFactor = WGPUBlendFactor_Zero,
+                            .dstFactor = WGPUBlendFactor_One
+                            }
+                        }),
+                    .writeMask = WGPUColorWriteMask_All
+                }}
+            })
+        }));
 
 	return true;
 }
