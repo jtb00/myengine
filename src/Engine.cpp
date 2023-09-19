@@ -40,7 +40,7 @@ void Engine::gameLoop(const UpdateCallback& callback) {
 		}
 		input.update();
 		callback();
-		graphics.draw();
+		//graphics.draw();
 		std::this_thread::sleep_for(start + step - std::chrono::steady_clock::now());
 	}
 }
