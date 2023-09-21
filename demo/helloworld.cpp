@@ -4,6 +4,7 @@
 
 #include "../src/Engine.h"
 #include "../src/InputManager.h"
+#include "../src/GraphicsManager.h"
 
 void keyPressed() {
 	Key a = Key::KEY_A;

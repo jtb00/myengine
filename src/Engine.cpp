@@ -39,8 +39,11 @@ void Engine::gameLoop(const UpdateCallback& callback) {
 			break;
 		}
 		input.update();
-		callback();
-		//graphics.draw();
+		//callback();
+		graphics.loadImg("square", "C:/Users/Jack/Projects/CS 425/myengine/assets/Untitled.png");
+		Sprite s = { "square", 0, 0, 1.0, 1.0 };
+		const std::vector<Sprite> sprites = { s };
+		graphics.draw(sprites);
 		std::this_thread::sleep_for(start + step - std::chrono::steady_clock::now());
 	}
 }

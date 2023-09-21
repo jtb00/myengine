@@ -13,14 +13,22 @@ class ResourceManager;
 struct ImageData {
 	int width;
 	int height;
-	WGPUTexture texture;
+	WGPUTextureRef texture;
 
-	ImageData(int width, int height, WGPUTexture texture) {};
-
-	~ImageData() {
-		wgpuTextureDestroy(texture);
-		wgpuTextureRelease(texture);
+	ImageData(int w, int h, WGPUTextureRef t) {
+		width = w;
+		height = h;
+		texture = t;
 	}
+
+	/*
+	~ImageData() {
+		if (texture != nullptr) {
+			wgpuTextureDestroy(texture);
+			wgpuTextureRelease(texture);
+		}
+	}
+	*/
 };
 
 struct Sprite {

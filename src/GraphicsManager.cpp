@@ -308,7 +308,7 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
     int width, height, channels;
     unsigned char* data = stbi_load(imagepath.c_str(), &width, &height, &channels, 4);
 
-    WGPUTexture tex = wgpuDeviceCreateTexture(wgpuDevice, to_ptr(WGPUTextureDescriptor{
+    WGPUTextureRef tex = wgpuDeviceCreateTexture(wgpuDevice, to_ptr(WGPUTextureDescriptor{
     .usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst,
     .dimension = WGPUTextureDimension_2D,
     .size = { (uint32_t)width, (uint32_t)height, 1 },
@@ -333,7 +333,9 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
 	return true;
 }
 
-void GraphicsManager::draw(const std::vector< Sprite >& sprites) {
+void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
+    auto sprites = sprites_input;
+    
     WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
@@ -357,6 +359,8 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites) {
     wgpuRenderPassEncoderSetPipeline(render_pass, pipeline);
 
     wgpuRenderPassEncoderSetVertexBuffer(render_pass, 0, vertex_buffer, 0, 4 * 4 * sizeof(float));
+
+    wgpuRenderPassEncoderSetVertexBuffer(render_pass, 1 /* slot */, instance_buffer, 0, sizeof(InstanceData) * sprites.size());
 
     Uniforms uniforms;
     // Start with an identity matrix.
