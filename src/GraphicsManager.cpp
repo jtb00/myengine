@@ -200,6 +200,33 @@ fn fragment_shader_main( in: VertexOutput ) -> @location(0) vec4f {
 
     pipeline = wgpuDeviceCreateRenderPipeline(wgpuDevice, to_ptr(WGPURenderPipelineDescriptor{
 
+        // Describe the data types of our uniforms.
+        // This is called the bind group layout. We are using one group (0) and three bindings (0), (1), (2).
+        // This exactly matches what's in the shader.
+        // We're not actually passing data, we're just declaring matching types.
+        .layout = wgpuDeviceCreatePipelineLayout(wgpuDevice, to_ptr(WGPUPipelineLayoutDescriptor{
+            .bindGroupLayoutCount = 1, .bindGroupLayouts = to_ptr<WGPUBindGroupLayout>({
+                wgpuDeviceCreateBindGroupLayout(
+                    wgpuDevice, to_ptr(WGPUBindGroupLayoutDescriptor{.entryCount = 3, .entries = to_ptr<WGPUBindGroupLayoutEntry>({
+                        {
+                            .binding = 0,
+                            .visibility = WGPUShaderStage_Vertex,
+                            .buffer = {.type = WGPUBufferBindingType_Uniform}
+                        },
+                        {
+                            .binding = 1,
+                            .visibility = WGPUShaderStage_Fragment,
+                            .sampler = {.type = WGPUSamplerBindingType_Filtering}
+                        },
+                        {
+                            .binding = 2,
+                            .visibility = WGPUShaderStage_Fragment,
+                            .texture = {.sampleType = WGPUTextureSampleType_Float, 
+                            .viewDimension = WGPUTextureViewDimension_2D},
+                        }
+                    }) }))
+                }) })),
+        
         // Describe the vertex shader inputs
         .vertex = {
             .module = shader_module,
@@ -336,7 +363,7 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
 void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
     auto sprites = sprites_input;
     
-    WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
+    WGPUBuffer instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
         }));
@@ -383,18 +410,20 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
 
     int i = 0;
     for (Sprite s : sprites) {
-        ImageData id = nameToImage.at(s.name);
+        ImageData* id = &nameToImage.at(s.name);
         InstanceData d;
-        if (id.width < id.height) {
-            d.scale = vec2(double(id.width) / id.height, 1.0);
+        if (id->width < id->height) {
+            d.scale = vec2(double(id->width) / id->height, 1.0);
         }
         else {
-            d.scale = vec2(1.0, double(id.height) / id.width);
+            d.scale = vec2(1.0, double(id->height) / id->width);
         }
+
+        d.scale *= s.scale;
 
         wgpuQueueWriteBuffer(wgpuQueue, instance_buffer, i * sizeof(InstanceData), &d, sizeof(InstanceData));
         
-        WGPUBindGroupRef bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
+        id->bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
             .layout = ref(wgpuRenderPipelineGetBindGroupLayout(pipeline, 0)),
             .entryCount = 3,
             // The entries `.binding` matches what we wrote in the shader.
@@ -410,12 +439,12 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
                 },
                 {
                     .binding = 2,
-                    .textureView = wgpuTextureCreateView(id.texture, nullptr)
+                    .textureView = wgpuTextureCreateView(id->texture, nullptr)
                 }
                 })
             }));
 
-        wgpuRenderPassEncoderSetBindGroup(render_pass, 1, bind_group, 0, nullptr);
+        wgpuRenderPassEncoderSetBindGroup(render_pass, 1, id->bind_group, 0, nullptr);
 
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
 
@@ -429,5 +458,5 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
 
     wgpuSwapChainPresent(swapchain);
 
-    wgpuCommandBufferRelease(command);
+    //wgpuCommandBufferRelease(command);
 }

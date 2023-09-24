@@ -5,6 +5,8 @@
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
+#define WEBGPU_RAII_DEBUG
+#define WEBGPU_RAII_LEAK
 #include "webgpu_raii.h"
 
 class Engine;
@@ -14,6 +16,7 @@ struct ImageData {
 	int width;
 	int height;
 	WGPUTextureRef texture;
+	WGPUBindGroupRef bind_group;
 
 	ImageData(int w, int h, WGPUTextureRef t) {
 		width = w;
