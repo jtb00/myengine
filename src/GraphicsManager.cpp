@@ -334,6 +334,9 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
 
     int width, height, channels;
     unsigned char* data = stbi_load(imagepath.c_str(), &width, &height, &channels, 4);
+    if (stbi_failure_reason()) {
+        std::cerr << stbi_failure_reason();
+    }
 
     WGPUTextureRef tex = wgpuDeviceCreateTexture(wgpuDevice, to_ptr(WGPUTextureDescriptor{
     .usage = WGPUTextureUsage_TextureBinding | WGPUTextureUsage_CopyDst,
@@ -362,16 +365,12 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
 
 void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
     auto sprites = sprites_input;
-    
     WGPUBuffer instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
         }));
-    
     WGPUCommandEncoderRef encoder = wgpuDeviceCreateCommandEncoder(wgpuDevice, nullptr);
-
     WGPUTextureViewRef current_texture_view = wgpuSwapChainGetCurrentTextureView(swapchain);
-
     WGPURenderPassEncoderRef render_pass = wgpuCommandEncoderBeginRenderPass(encoder, to_ptr<WGPURenderPassDescriptor>({
     .colorAttachmentCount = 1,
     .colorAttachments = to_ptr<WGPURenderPassColorAttachment>({{
@@ -382,13 +381,9 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
         .clearValue = WGPUColor{ 1.0, 1.0, 1.0, 1.0 }
         }})
         }));
-
     wgpuRenderPassEncoderSetPipeline(render_pass, pipeline);
-
     wgpuRenderPassEncoderSetVertexBuffer(render_pass, 0, vertex_buffer, 0, 4 * 4 * sizeof(float));
-
     wgpuRenderPassEncoderSetVertexBuffer(render_pass, 1 /* slot */, instance_buffer, 0, sizeof(InstanceData) * sprites.size());
-
     Uniforms uniforms;
     // Start with an identity matrix.
     uniforms.projection = mat4{ 1 };
@@ -403,11 +398,8 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
         uniforms.projection[0][0] *= windowHeight;
         uniforms.projection[0][0] /= windowWidth;
     }
-
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
-
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
-
     int i = 0;
     for (Sprite s : sprites) {
         ImageData* id = &nameToImage.at(s.name);
@@ -418,11 +410,8 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
         else {
             d.scale = vec2(1.0, double(id->height) / id->width);
         }
-
         d.scale *= s.scale;
-
         wgpuQueueWriteBuffer(wgpuQueue, instance_buffer, i * sizeof(InstanceData), &d, sizeof(InstanceData));
-        
         id->bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
             .layout = ref(wgpuRenderPipelineGetBindGroupLayout(pipeline, 0)),
             .entryCount = 3,
@@ -443,20 +432,13 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
                 }
                 })
             }));
-
-        wgpuRenderPassEncoderSetBindGroup(render_pass, 1, id->bind_group, 0, nullptr);
-
+        wgpuRenderPassEncoderSetBindGroup(render_pass, 0, id->bind_group, 0, nullptr);
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
-
         i++;
     }
-
     wgpuRenderPassEncoderEnd(render_pass);
-
     WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, nullptr);
     wgpuQueueSubmit(wgpuQueue, 1, &command);
-
     wgpuSwapChainPresent(swapchain);
-
-    //wgpuCommandBufferRelease(command);
+    wgpuCommandBufferRelease(command);
 }

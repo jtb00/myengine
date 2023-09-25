@@ -12,8 +12,6 @@ target("myengine")
 	set_kind("static")
 	set_languages("cxx20")
 	
-	set_rundir("$(projectdir)")
-	
 	-- Declare our engine's header path.
     -- This allows targets that depend on the engine to #include them.
     add_includedirs("src", {public = true})
@@ -30,6 +28,8 @@ target("myengine")
 target("helloworld")
     set_kind("binary")
     set_languages("cxx20")
+	
+	set_rundir("$(projectdir)")
 	
 	add_deps("myengine")
     

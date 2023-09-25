@@ -5,8 +5,8 @@
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
-#define WEBGPU_RAII_DEBUG
-#define WEBGPU_RAII_LEAK
+//#define WEBGPU_RAII_DEBUG
+//#define WEBGPU_RAII_LEAK
 #include "webgpu_raii.h"
 
 class Engine;
