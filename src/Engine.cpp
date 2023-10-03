@@ -8,7 +8,7 @@
 #include "ResourceManager.h"
 
 //Creates and initializes Engine components
-Engine::Engine(): graphics(), input(), resources() {}
+Engine::Engine(): graphics(), input(), resources(), ecs() {}
 
 //Signals Engine components to start, returns false if a component fails
 bool Engine::start() {

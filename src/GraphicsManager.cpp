@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "spdlog/spdlog.h"
-#include "glm/glm.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -11,8 +10,7 @@
 #include "Engine.h"
 #include "GraphicsManager.h"
 #include "ResourceManager.h"
-
-using namespace glm;
+#include "ECS.h"
 
 template< typename T > constexpr const T* to_ptr(const T& val) { return &val; }
 template< typename T, std::size_t N > constexpr const T* to_ptr(const T(&& arr)[N]) { return arr; }
@@ -401,7 +399,8 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
     int i = 0;
-    for (Sprite s : sprites) {
+    globalEngine.ecs.ForEach<Sprite>([&](EntityID entity) {
+        Sprite& s = globalEngine.ecs.Get<Sprite>(entity);
         ImageData* id = &nameToImage.at(s.name);
         InstanceData d;
         if (id->width < id->height) {
@@ -435,7 +434,7 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
         wgpuRenderPassEncoderSetBindGroup(render_pass, 0, id->bind_group, 0, nullptr);
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
         i++;
-    }
+        });
     wgpuRenderPassEncoderEnd(render_pass);
     WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, nullptr);
     wgpuQueueSubmit(wgpuQueue, 1, &command);

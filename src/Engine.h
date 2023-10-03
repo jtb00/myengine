@@ -5,9 +5,11 @@
 #include "GraphicsManager.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
+#include "ECS.h"
 
 class GraphicsManager;
 class InputManager;
+class ECS;
 
 typedef std::function<void()> UpdateCallback;
 
@@ -16,6 +18,7 @@ public:
 	GraphicsManager graphics;
 	InputManager input;
 	ResourceManager resources;
+	ECS ecs;
 
 	Engine();
 	bool start();

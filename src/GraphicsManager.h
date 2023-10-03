@@ -9,6 +9,8 @@
 //#define WEBGPU_RAII_LEAK
 #include "webgpu_raii.h"
 
+#include "Types.h"
+
 class Engine;
 class ResourceManager;
 
@@ -32,14 +34,6 @@ struct ImageData {
 		}
 	}
 	*/
-};
-
-struct Sprite {
-	std::string name;
-	int xPos;
-	int yPos;
-	float scale;
-	float z;
 };
 
 //handles graphics
