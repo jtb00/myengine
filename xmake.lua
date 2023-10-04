@@ -22,7 +22,7 @@ target("myengine")
 	add_packages("glfw", {public = true})
 	add_packages("spdlog")
 	add_packages("wgpu-native", "glfw3webgpu", {public = true})
-	add_packages("glm")
+	add_packages("glm", {public = true})
 	add_packages("stb")
 
 target("helloworld")

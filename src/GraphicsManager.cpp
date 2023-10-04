@@ -361,8 +361,12 @@ bool GraphicsManager::loadImg(const std::string& name, const std::string& path) 
 	return true;
 }
 
-void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
-    auto sprites = sprites_input;
+void GraphicsManager::draw() {
+    std::vector<Sprite> sprites;
+    globalEngine.ecs.ForEach<Sprite>([&](EntityID e) {
+        Sprite& s = globalEngine.ecs.Get<Sprite>(e);
+        sprites.push_back(s);
+        });
     WGPUBuffer instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
@@ -399,8 +403,7 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
     int i = 0;
-    globalEngine.ecs.ForEach<Sprite>([&](EntityID entity) {
-        Sprite& s = globalEngine.ecs.Get<Sprite>(entity);
+    for (Sprite s : sprites) {
         ImageData* id = &nameToImage.at(s.name);
         InstanceData d;
         if (id->width < id->height) {
@@ -410,6 +413,8 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
             d.scale = vec2(1.0, double(id->height) / id->width);
         }
         d.scale *= s.scale;
+        d.translation.x = s.xPos;
+        d.translation.y = s.yPos;
         wgpuQueueWriteBuffer(wgpuQueue, instance_buffer, i * sizeof(InstanceData), &d, sizeof(InstanceData));
         id->bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
             .layout = ref(wgpuRenderPipelineGetBindGroupLayout(pipeline, 0)),
@@ -434,7 +439,7 @@ void GraphicsManager::draw(const std::vector< Sprite >& sprites_input) {
         wgpuRenderPassEncoderSetBindGroup(render_pass, 0, id->bind_group, 0, nullptr);
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
         i++;
-        });
+        }
     wgpuRenderPassEncoderEnd(render_pass);
     WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, nullptr);
     wgpuQueueSubmit(wgpuQueue, 1, &command);

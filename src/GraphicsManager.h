@@ -69,5 +69,5 @@ public:
 	bool start();
 	void shutdown();
 	bool loadImg(const std::string& name, const std::string& path);
-	void draw(const std::vector< Sprite >& sprites);
+	void draw();
 };

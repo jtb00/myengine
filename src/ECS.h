@@ -26,6 +26,10 @@ class ECS {
 public:
     std::unordered_map< ComponentIndex, std::unique_ptr< SparseSetHolder > > m_components;
     
+    ECS() {
+        counter = 0;
+    }
+
     template< typename T >
     std::unordered_map< EntityID, T >&
         GetAppropriateSparseSet() {
@@ -39,7 +43,8 @@ public:
 
     template< typename T >
     EntityID Create() {
-
+        counter++;
+        return counter;
     }
     
     template< typename T >
@@ -65,6 +70,22 @@ public:
         std::vector<ComponentIndex> also{ std::type_index(typeid(AndAlsoTheseComponents))... };
         // Iterate over entities in the first container.
         // If the entity has all components in `also`, call `callback( entity )`.
-        // ... your code goes here ...
+        std::unordered_map<EntityID, EntitiesThatHaveThisComponent> set = GetAppropriateSparseSet<EntitiesThatHaveThisComponent>();
+        for (std::pair<const EntityID, EntitiesThatHaveThisComponent> p : set) {
+            EntityID e = p.first;
+            bool hasComponents = true;
+            for (ComponentIndex ci : also) {
+                if (!m_components[ci]->Has(e)) {
+                    hasComponents = false;
+                    break;
+                }
+            }
+            if (hasComponents) {
+                callback(e);
+            }
+        }
     }
+
+private:
+    EntityID counter;
 };
