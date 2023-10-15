@@ -27,13 +27,15 @@ int main( int argc, const char* argv[] ) {
     if(!globalEngine.start()) {
 		return -1;
 	}
-	EntityID sprite = globalEngine.ecs.Create<Sprite>();
-	//Sprite s = { "square", 0, 0, 50.0, 1.0 };
+	EntityID sprite = globalEngine.ecs.Create();
 	globalEngine.ecs.Get<Sprite>(sprite).name = "square";
 	globalEngine.ecs.Get<Sprite>(sprite).xPos = 0;
 	globalEngine.ecs.Get<Sprite>(sprite).yPos = 0;
 	globalEngine.ecs.Get<Sprite>(sprite).scale = 50.0;
 	globalEngine.ecs.Get<Sprite>(sprite).z = 1.0;
+	globalEngine.scripts.LoadScript("script", "C:/Users/Jack/Projects/CS 425/myengine/src/script.lua");
+	EntityID script = globalEngine.ecs.Create();
+	globalEngine.ecs.Get<Script>(script).name = "script";
     globalEngine.gameLoop(&keyPressed);
 	globalEngine.shutdown();
     return 0;

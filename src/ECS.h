@@ -41,7 +41,6 @@ public:
         return static_cast<SparseSet<T>&>(*m_components[index]).data;
     }
 
-    template< typename T >
     EntityID Create() {
         counter++;
         return counter;

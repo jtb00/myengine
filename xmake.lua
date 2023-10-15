@@ -4,6 +4,7 @@ add_requires("spdlog")
 add_requires("wgpu-native", "glfw3webgpu")
 add_requires("glm")
 add_requires("stb")
+add_requires("lua", "sol2")
 
 set_policy("build.warning", true) -- show warnings
 set_warnings("all") -- warn about many things
@@ -24,6 +25,8 @@ target("myengine")
 	add_packages("wgpu-native", "glfw3webgpu", {public = true})
 	add_packages("glm", {public = true})
 	add_packages("stb")
+	add_packages("lua")
+	add_packages("sol2", {public = true})
 
 target("helloworld")
     set_kind("binary")

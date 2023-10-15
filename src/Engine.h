@@ -6,6 +6,7 @@
 #include "InputManager.h"
 #include "ResourceManager.h"
 #include "ECS.h"
+#include "ScriptManager.h"
 
 class GraphicsManager;
 class InputManager;
@@ -19,6 +20,7 @@ public:
 	InputManager input;
 	ResourceManager resources;
 	ECS ecs;
+	ScriptManager scripts;
 
 	Engine();
 	bool start();

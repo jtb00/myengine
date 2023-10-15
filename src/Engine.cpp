@@ -8,7 +8,7 @@
 #include "ResourceManager.h"
 
 //Creates and initializes Engine components
-Engine::Engine(): graphics(), input(), resources(), ecs() {}
+Engine::Engine(): graphics(), input(), resources(), ecs(), scripts() {}
 
 //Signals Engine components to start, returns false if a component fails
 bool Engine::start() {
@@ -17,6 +17,12 @@ bool Engine::start() {
 	}
 	graphics.loadImg("square", "C:/Users/Jack/Projects/CS 425/myengine/assets/Untitled.png");
 	if(!input.start()) {
+		return false;
+	}
+	if (!resources.start()) {
+		return false;
+	}
+	if (!scripts.start()) {
 		return false;
 	}
 	return true;
@@ -39,6 +45,7 @@ void Engine::gameLoop(const UpdateCallback& callback) {
 		if (glfwWindowShouldClose(graphics.window)) {
 			break;
 		}
+		scripts.update();
 		input.update();
 		callback();
 		graphics.draw();

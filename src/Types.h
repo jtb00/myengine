@@ -13,4 +13,3 @@ struct Velocity { double x, y; };
 struct Gravity { double meters_per_second; };
 struct Sprite { std::string name; int xPos; int yPos; float scale; float z; };
 struct Health { double percent; };
-struct Script { std::string name; };
