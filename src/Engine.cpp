@@ -15,7 +15,7 @@ bool Engine::start() {
 	if(!graphics.start()) {
 		return false;
 	}
-	graphics.loadImg("square", "C:/Users/Jack/Projects/CS 425/myengine/assets/Untitled.png");
+	//graphics.loadImg("square", "C:/Users/gamec/Projects/CS 425/myengine/assets/Untitled.png");
 	if(!input.start()) {
 		return false;
 	}
