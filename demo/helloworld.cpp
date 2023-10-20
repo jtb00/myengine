@@ -27,8 +27,10 @@ int main( int argc, const char* argv[] ) {
     if(!globalEngine.start()) {
 		return -1;
 	}
+	
 	auto setup = globalEngine.scripts.lua.load_file("C:/Users/gamec/Projects/CS 425/myengine/src/setup.lua");
 	setup();
+	
 	/*
 	EntityID sprite = globalEngine.ecs.Create();
 	globalEngine.ecs.Get<Sprite>(sprite).name = "square";
