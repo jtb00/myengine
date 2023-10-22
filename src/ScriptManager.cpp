@@ -82,19 +82,11 @@ bool ScriptManager::start() {
 		{"RIGHT_SHIFT", Key::KEY_RIGHT_SHIFT },
 		{"RIGHT_CONTROL", Key::KEY_RIGHT_CONTROL },
 		{"RIGHT_ALT", Key::KEY_RIGHT_ALT }, });
-	lua.new_usertype<Position>("Position",
-		sol::constructors<Position()>(),
-		"x", &Position::x,
-		"y", &Position::y
-		);
-	lua.new_usertype<Velocity>("Velocity",
-		sol::constructors<Velocity()>(),
-		"x", &Velocity::x,
-		"y", &Velocity::y
-		);
-	lua.new_usertype<Gravity>("Gravity",
-		sol::constructors<Gravity()>(),
-		"meters_per_second", &Gravity::meters_per_second
+	lua.new_usertype<Physics>("Physics",
+		sol::constructors<Physics()>(),
+		"v", &Physics::v,
+		"a", &Physics::a,
+		"g", &Physics::g
 		);
 	lua.new_usertype<Sprite>("Sprite",
 		sol::constructors<Sprite()>(),
@@ -117,7 +109,6 @@ bool ScriptManager::start() {
 		"x", &glm::vec3::x,
 		"y", &glm::vec3::y,
 		"z", &glm::vec3::z,
-		// optional and fancy: operator overloading. see: https://github.com/ThePhD/sol2/issues/547
 		sol::meta_function::addition, sol::overload([](const glm::vec3& v1, const glm::vec3& v2) -> glm::vec3 { return v1 + v2; }),
 		sol::meta_function::subtraction, sol::overload([](const glm::vec3& v1, const glm::vec3& v2) -> glm::vec3 { return v1 - v2; }),
 		sol::meta_function::multiplication, sol::overload(
@@ -143,9 +134,7 @@ bool ScriptManager::start() {
 	lua.set_function("loadImg", [&](const std::string& name, const std::string& path) {return globalEngine.graphics.loadImg(name, path);});
 	lua.set_function("createEntity", [&](void) {return globalEngine.ecs.Create();});
 	lua.set_function("destroyEntity", [&](EntityID e) {globalEngine.ecs.Destroy(e);});
-	lua.set_function("getPosition", [&](EntityID e)->Position& {return globalEngine.ecs.Get<Position>(e);});
-	lua.set_function("getVelocity", [&](EntityID e)->Velocity& {return globalEngine.ecs.Get<Velocity>(e);});
-	lua.set_function("getGravity", [&](EntityID e)->Gravity& {return globalEngine.ecs.Get<Gravity>(e);});
+	lua.set_function("getPhysics", [&](EntityID e)->Physics& {return globalEngine.ecs.Get<Physics>(e);});
 	lua.set_function("getSprite", [&](EntityID e)->Sprite& {return globalEngine.ecs.Get<Sprite>(e);});
 	lua.set_function("getHealth", [&](EntityID e)->Health& {return globalEngine.ecs.Get<Health>(e);});
 	lua.set_function("getScript", [&](EntityID e)->Script& {return globalEngine.ecs.Get<Script>(e);});

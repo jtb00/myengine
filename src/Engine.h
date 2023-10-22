@@ -7,6 +7,7 @@
 #include "ResourceManager.h"
 #include "ECS.h"
 #include "ScriptManager.h"
+#include "PhysicsManager.h"
 
 class GraphicsManager;
 class InputManager;
@@ -21,6 +22,7 @@ public:
 	ResourceManager resources;
 	ECS ecs;
 	ScriptManager scripts;
+	PhysicsManager physics;
 
 	Engine();
 	bool start();

@@ -1,8 +1,12 @@
-local e = createEntity()
---s = Sprite.new("square", 0, 0, 50.0, 1.0)
-loadImg("square", "C:/Users/gamec/Projects/CS 425/myengine/assets/Untitled.png")
-getSprite(e).name = "square"
-getSprite(e).xPos = 0
-getSprite(e).yPos = 0
-getSprite(e).scale = 50.0
-getSprite(e).z = 1.0
+player = createEntity()
+loadImg("square", "C:/Users/Jack/Projects/CS 425/myengine/assets/Untitled.png")
+getSprite(player).name = "square"
+getSprite(player).xPos = 0
+getSprite(player).yPos = 0
+getSprite(player).scale = 25.0
+getSprite(player).z = 1.0
+getVelocity(player).x = 0
+getVelocity(player).y = 0
+getGravity(player).accel = -9.8
+
+require 'loop'

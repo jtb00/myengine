@@ -8,7 +8,7 @@
 #include "ResourceManager.h"
 
 //Creates and initializes Engine components
-Engine::Engine(): graphics(), input(), resources(), ecs(), scripts() {}
+Engine::Engine(): graphics(), input(), resources(), ecs(), scripts(), physics() {}
 
 //Signals Engine components to start, returns false if a component fails
 bool Engine::start() {
@@ -48,6 +48,7 @@ void Engine::gameLoop(const UpdateCallback& callback) {
 		scripts.update();
 		input.update();
 		callback();
+		physics.update();
 		graphics.draw();
 		std::this_thread::sleep_for(start + step - std::chrono::steady_clock::now());
 	}
