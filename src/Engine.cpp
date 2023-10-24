@@ -6,23 +6,31 @@
 #include "GraphicsManager.h"
 #include "InputManager.h"
 #include "ResourceManager.h"
+#include "SoundManager.h"
 
 //Creates and initializes Engine components
-Engine::Engine(): graphics(), input(), resources(), ecs(), scripts(), physics() {}
+Engine::Engine(): graphics(), input(), resources(), ecs(), scripts(), physics(), sound() {}
 
 //Signals Engine components to start, returns false if a component fails
-bool Engine::start() {
+bool Engine::start(std::string scriptPath) {
 	if(!graphics.start()) {
 		return false;
 	}
-	//graphics.loadImg("square", "C:/Users/gamec/Projects/CS 425/myengine/assets/Untitled.png");
 	if(!input.start()) {
 		return false;
 	}
 	if (!resources.start()) {
 		return false;
 	}
+	if (!sound.start()) {
+		return false;
+	}
 	if (!scripts.start()) {
+		return false;
+	}
+	auto setup = globalEngine.scripts.lua.load_file(scriptPath);
+	setup();
+	if (!physics.start()) {
 		return false;
 	}
 	return true;
@@ -32,6 +40,8 @@ bool Engine::start() {
 void Engine::shutdown() {
 	graphics.shutdown();
 	input.shutdown();
+	resources.shutdown();
+	sound.shutdown();
 }
 
 //Main game loop

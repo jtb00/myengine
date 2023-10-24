@@ -1,10 +1,9 @@
-start = os.time()
 if isKeyPressed(KEYBOARD.RIGHT) then
 	getSprite(player).xPos = getSprite(player).xPos + 10
 elseif isKeyPressed(KEYBOARD.LEFT) then
 	getSprite(player).xPos = getSprite(player).xPos - 10
 end
-
-dt = os.difftime(os.time(), start)
-getVelocity(player).y = getVelocity(player).y + getGravity(player).accel * dt
-getSprite(player).yPos = getSprite(player).yPos + getVelocity(player).y * dt
+if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos == -80 then
+	getPhysics(player).v.y = getPhysics(player).v.y + 100
+	--playSound("boing")
+end

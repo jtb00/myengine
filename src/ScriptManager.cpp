@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include "ECS.h"
 #include "ScriptManager.h"
+#include "SoundManager.h"
 
 ScriptManager::ScriptManager(): lua() {}
 
@@ -84,6 +85,7 @@ bool ScriptManager::start() {
 		{"RIGHT_ALT", Key::KEY_RIGHT_ALT }, });
 	lua.new_usertype<Physics>("Physics",
 		sol::constructors<Physics()>(),
+		"p", &Physics::p,
 		"v", &Physics::v,
 		"a", &Physics::a,
 		"g", &Physics::g
@@ -132,6 +134,8 @@ bool ScriptManager::start() {
 	lua.set_function("isKeyPressed", [&](const int keycode) { return globalEngine.input.isKeyPressed(static_cast<Key>(keycode)); });
 	lua.set_function("quit", [&](void) { globalEngine.shutdown(); });
 	lua.set_function("loadImg", [&](const std::string& name, const std::string& path) {return globalEngine.graphics.loadImg(name, path);});
+	lua.set_function("loadSound", [&](const std::string& name, const std::string& path) {globalEngine.sound.loadSound(name, path);});
+	lua.set_function("playSound", [&](const std::string& name) {globalEngine.sound.playSound(name);});
 	lua.set_function("createEntity", [&](void) {return globalEngine.ecs.Create();});
 	lua.set_function("destroyEntity", [&](EntityID e) {globalEngine.ecs.Destroy(e);});
 	lua.set_function("getPhysics", [&](EntityID e)->Physics& {return globalEngine.ecs.Get<Physics>(e);});

@@ -8,6 +8,7 @@
 #include "ECS.h"
 #include "ScriptManager.h"
 #include "PhysicsManager.h"
+#include "SoundManager.h"
 
 class GraphicsManager;
 class InputManager;
@@ -23,9 +24,10 @@ public:
 	ECS ecs;
 	ScriptManager scripts;
 	PhysicsManager physics;
+	SoundManager sound;
 
 	Engine();
-	bool start();
+	bool start(std::string scriptPath);
 	void shutdown();
 	void gameLoop(const UpdateCallback& callback);
 };

@@ -25,15 +25,6 @@ struct ImageData {
 		height = h;
 		texture = t;
 	}
-
-	/*
-	~ImageData() {
-		if (texture != nullptr) {
-			wgpuTextureDestroy(texture);
-			wgpuTextureRelease(texture);
-		}
-	}
-	*/
 };
 
 //handles graphics
