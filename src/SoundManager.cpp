@@ -18,9 +18,8 @@ void SoundManager::shutdown() {
 
 void SoundManager::loadSound(const std::string& name, const std::string& path) {
 	std::string soundPath = (*resources).resolvePath(path);
-	SoLoud::Wav sound;
-	sound.load(soundPath.c_str());
-	nameToSound.insert(std::pair(name, sound));
+	nameToSound.insert(std::pair(name, SoLoud::Wav()));
+	nameToSound[name].load(soundPath.c_str());
 }
 
 bool SoundManager::destroySound(const std::string& name) {

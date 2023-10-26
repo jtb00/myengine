@@ -5,5 +5,5 @@ elseif isKeyPressed(KEYBOARD.LEFT) then
 end
 if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos == -80 then
 	getPhysics(player).v.y = getPhysics(player).v.y + 100
-	--playSound("boing")
+	playSound("boing")
 end
