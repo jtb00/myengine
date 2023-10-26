@@ -7,3 +7,8 @@ if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos == -80 then
 	getPhysics(player).v.y = getPhysics(player).v.y + 100
 	playSound("boing")
 end
+if isKeyPressed(KEYBOARD.R) then
+	getSprite(img).scale = getSprite(img).scale - 5
+elseif isKeyPressed(KEYBOARD.T) then
+	getSprite(img).scale = getSprite(img).scale + 5
+end
