@@ -5,8 +5,8 @@
 #include "soloud.h"
 #include "soloud_wav.h"
 
-class Engine;
-class ResourceManager;
+//class Engine;
+//class ResourceManager;
 
 class SoundManager {
 public:

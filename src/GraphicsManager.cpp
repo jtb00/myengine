@@ -167,7 +167,7 @@ struct VertexInput {
     @location(0) position: vec2f,
     @location(1) texcoords: vec2f,
     @location(2) translation: vec3f,
-    @location(3) scale: f32,
+    @location(3) scale: vec2f,
 };
 
 struct VertexOutput {
