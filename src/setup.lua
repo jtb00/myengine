@@ -1,8 +1,8 @@
 player = createEntity()
 img = createEntity()
-loadImg("square", "C:/Users/gamec/Projects/CS 425/myengine/assets/Untitled.png")
-loadImg("img", "C:/Users/gamec/Projects/CS 425/myengine/assets/good.png")
-loadSound("boing", "C:/Users/gamec/Projects/CS 425/myengine/assets/boing.wav")
+loadImg("square", "assets/Untitled.png")
+loadImg("img", "assets/good.png")
+loadSound("boing", "assets/boing.wav")
 getSprite(player).name = "square"
 getSprite(player).xPos = 0
 getSprite(player).yPos = 0

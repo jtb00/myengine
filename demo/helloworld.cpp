@@ -10,11 +10,11 @@ void temp() {}
 
 //start globalEngine and run until gameLoop exits
 int main( int argc, const char* argv[] ) {
-	std::string setup = "C:/Users/gamec/Projects/CS 425/myengine/src/setup.lua";
+	std::string setup = "src/setup.lua";
 	if(!globalEngine.start(setup)) {
 		return -1;
 	}	
-	globalEngine.scripts.LoadScript("loopScript", "C:/Users/gamec/Projects/CS 425/myengine/src/loop.lua");
+	globalEngine.scripts.LoadScript("loopScript", "src/loop.lua");
 	EntityID loopScript = globalEngine.ecs.Create();
 	globalEngine.ecs.Get<Script>(loopScript).name = "loopScript";
     globalEngine.gameLoop(&temp);
