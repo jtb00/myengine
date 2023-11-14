@@ -1,10 +1,10 @@
-if isKeyPressed(KEYBOARD.RIGHT) then
-	getSprite(player).xPos = getSprite(player).xPos + 10
-elseif isKeyPressed(KEYBOARD.LEFT) then
-	getSprite(player).xPos = getSprite(player).xPos - 10
+if isKeyPressed(KEYBOARD.RIGHT) and getSprite(player).xPos < xBound then
+	getSprite(player).xPos = getSprite(player).xPos + speed
+elseif isKeyPressed(KEYBOARD.LEFT) and getSprite(player).xPos > -xBound then
+	getSprite(player).xPos = getSprite(player).xPos - speed
 end
-if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos == -80 then
-	getPhysics(player).v.y = getPhysics(player).v.y + 100
+if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos == -yBound then
+	getPhysics(player).v.y = getPhysics(player).v.y + jumpForce
 	playSound("boing")
 end
 if isKeyPressed(KEYBOARD.R) then
