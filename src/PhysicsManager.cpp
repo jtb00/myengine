@@ -23,14 +23,11 @@ void PhysicsManager::update() {
 		Physics& phy = globalEngine.ecs.Get<Physics>(e);
 		std::chrono::duration<float> delta = std::chrono::steady_clock::now() - phy.lastUpdate;
 		auto dt = delta.count();
+		phy.a.y = phy.g;
 		phy.v.x = phy.v.x + phy.a.x * dt;
 		phy.v.y = phy.v.y + phy.a.y * dt;
 		s.xPos = s.xPos + phy.v.x * dt;
 		s.yPos = s.yPos + phy.v.y * dt;
-		if (s.yPos <= -80) {
-			s.yPos = -80;
-			phy.v.y = 0;
-		}
 		phy.lastUpdate = std::chrono::steady_clock::now();
 		//printf("yPos %d\n", s.yPos);
 		});

@@ -1,3 +1,10 @@
+xBound = 110
+yBound = 80
+speed = 10
+jumpForce = 250
+gravity = -500
+flip = false
+
 player = createEntity()
 img = createEntity()
 loadImg("square", "assets/Untitled.png")
@@ -8,18 +15,6 @@ getSprite(player).xPos = 0
 getSprite(player).yPos = 0
 getSprite(player).scale = 25.0
 getSprite(player).z = 1.0
-getPhysics(player).g = -500
-
-getSprite(img).name = "img"
-getSprite(img).xPos = 0
-getSprite(img).yPos = 0
-getSprite(img).scale = 25.0
-getSprite(img).z = 2.0
-
-xBound = 110
-yBound = 80
-speed = 10
-jumpForce = 250
-flip = false
+getPhysics(player).g = gravity
 
 require 'loop'
