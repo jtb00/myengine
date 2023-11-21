@@ -4,6 +4,7 @@ speed = 10
 jumpForce = 250
 gravity = -500
 flip = false
+health = 3
 
 player = createEntity()
 img = createEntity()
@@ -15,5 +16,6 @@ getSprite(player).yPos = 0
 getSprite(player).scale = 25.0
 getSprite(player).z = 1.0
 getPhysics(player).g = gravity
+getHealth(player).percent = health
 
 require 'loop'
