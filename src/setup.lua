@@ -8,7 +8,6 @@ flip = false
 player = createEntity()
 img = createEntity()
 loadImg("square", "assets/Untitled.png")
-loadImg("img", "assets/good.png")
 loadSound("boing", "assets/boing.wav")
 getSprite(player).name = "square"
 getSprite(player).xPos = 0

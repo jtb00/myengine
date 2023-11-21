@@ -7,6 +7,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_wgpu.h"
+
 #include "Engine.h"
 #include "GraphicsManager.h"
 #include "ResourceManager.h"
@@ -63,7 +66,7 @@ GraphicsManager::GraphicsManager(int width, int height, std::string name, bool f
 
 //Creates window
 bool GraphicsManager::start() {
-	glfwInit();
+    glfwInit();
 	// We don't want GLFW to set up a graphics API.
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -132,6 +135,11 @@ bool GraphicsManager::start() {
     wgpuQueueWriteBuffer(wgpuQueue, vertex_buffer, 0, vertices, sizeof(vertices));
 
     WGPUTextureFormat swap_chain_format = wgpuSurfaceGetPreferredFormat(wgpuSurface, wgpuAdapter);
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOther(window, true);
+    ImGui_ImplWGPU_Init(wgpuDevice, 2, swap_chain_format);
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -324,6 +332,9 @@ fn fragment_shader_main( in: VertexOutput ) -> @location(0) vec4f {
 
 void GraphicsManager::shutdown() {
     nameToImage.clear();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplWGPU_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
 }
 
@@ -402,6 +413,15 @@ void GraphicsManager::draw() {
     }
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
+    //Drawing Dear ImGui elements currently stops sprites from rendering
+    /*
+    ImGui_ImplWGPU_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+    ImGui::Begin("Hello, world!");
+    ImGui::Text("This is some useful text.");
+    ImGui::End();
+    */
     int i = 0;
     for (Sprite s : sprites) {
         ImageData* id = &nameToImage.at(s.name);
@@ -440,6 +460,11 @@ void GraphicsManager::draw() {
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
         i++;
         }
+    /*
+    ImGui::EndFrame();
+    ImGui::Render();
+    ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), render_pass);
+    */
     wgpuRenderPassEncoderEnd(render_pass);
     WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, nullptr);
     wgpuQueueSubmit(wgpuQueue, 1, &command);

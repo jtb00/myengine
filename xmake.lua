@@ -6,6 +6,7 @@ add_requires("glm")
 add_requires("stb")
 add_requires("lua", "sol2")
 add_requires("soloud")
+add_requires("imgui", {configs = {glfw = true, wgpu = true}})
 
 set_policy("build.warning", true) -- show warnings
 set_warnings("all") -- warn about many things
@@ -29,6 +30,7 @@ target("myengine")
 	add_packages("lua")
 	add_packages("sol2", {public = true})
 	add_packages("soloud", {public = true})
+	add_packages("imgui")
 
 target("helloworld")
     set_kind("binary")
