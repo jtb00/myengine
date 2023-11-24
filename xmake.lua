@@ -30,7 +30,7 @@ target("myengine")
 	add_packages("lua")
 	add_packages("sol2", {public = true})
 	add_packages("soloud", {public = true})
-	add_packages("imgui")
+	add_packages("imgui", {public = true})
 
 target("helloworld")
     set_kind("binary")

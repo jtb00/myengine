@@ -10,6 +10,7 @@
 #include "webgpu_raii.h"
 
 #include "Types.h"
+#include "GUIManager.h"
 
 class Engine;
 class ResourceManager;
@@ -40,6 +41,7 @@ public:
 	Engine* engine;
 	//pointer to ResourceManager
 	ResourceManager* resources;
+	GUIManager gui;
 	//pointer to window
 	GLFWwindow* window;
 	//Name-to-image map

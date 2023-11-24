@@ -55,7 +55,7 @@ namespace {
     };
 }
 
-GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs) {
+GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs): gui() {
 	windowWidth = width;
 	windowHeight = height;
 	windowName = name;
@@ -135,11 +135,13 @@ bool GraphicsManager::start() {
     wgpuQueueWriteBuffer(wgpuQueue, vertex_buffer, 0, vertices, sizeof(vertices));
 
     WGPUTextureFormat swap_chain_format = wgpuSurfaceGetPreferredFormat(wgpuSurface, wgpuAdapter);
-
+    
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOther(window, true);
     ImGui_ImplWGPU_Init(wgpuDevice, 2, swap_chain_format);
+    
+    //gui.start(window, wgpuDevice, swap_chain_format);
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -335,6 +337,7 @@ void GraphicsManager::shutdown() {
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplWGPU_Shutdown();
     ImGui::DestroyContext();
+    //gui.shutdown();
     glfwTerminate();
 }
 
@@ -378,7 +381,7 @@ void GraphicsManager::draw() {
         Sprite& s = globalEngine.ecs.Get<Sprite>(e);
         sprites.push_back(s);
         });
-    WGPUBuffer instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
+    WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
         }));
@@ -414,14 +417,15 @@ void GraphicsManager::draw() {
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
     //Drawing Dear ImGui elements currently stops sprites from rendering
-    /*
+    
     ImGui_ImplWGPU_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    
     ImGui::Begin("Hello, world!");
     ImGui::Text("This is some useful text.");
     ImGui::End();
-    */
+    
     int i = 0;
     for (Sprite s : sprites) {
         ImageData* id = &nameToImage.at(s.name);
@@ -436,7 +440,8 @@ void GraphicsManager::draw() {
         d.translation.x = s.xPos;
         d.translation.y = s.yPos;
         wgpuQueueWriteBuffer(wgpuQueue, instance_buffer, i * sizeof(InstanceData), &d, sizeof(InstanceData));
-        id->bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
+        if (!id->bind_group) {
+            id->bind_group = wgpuDeviceCreateBindGroup(wgpuDevice, to_ptr(WGPUBindGroupDescriptor{
             .layout = ref(wgpuRenderPipelineGetBindGroupLayout(pipeline, 0)),
             .entryCount = 3,
             // The entries `.binding` matches what we wrote in the shader.
@@ -455,16 +460,19 @@ void GraphicsManager::draw() {
                     .textureView = wgpuTextureCreateView(id->texture, nullptr)
                 }
                 })
-            }));
+                }));
+        }
+        
         wgpuRenderPassEncoderSetBindGroup(render_pass, 0, id->bind_group, 0, nullptr);
         wgpuRenderPassEncoderDraw(render_pass, 4, 1, 0, i);
         i++;
         }
-    /*
+    
     ImGui::EndFrame();
     ImGui::Render();
     ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), render_pass);
-    */
+    
+    //gui.draw(encoder, current_texture_view);
     wgpuRenderPassEncoderEnd(render_pass);
     WGPUCommandBuffer command = wgpuCommandEncoderFinish(encoder, nullptr);
     wgpuQueueSubmit(wgpuQueue, 1, &command);
