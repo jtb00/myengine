@@ -17,5 +17,6 @@ getSprite(player).scale = 25.0
 getSprite(player).z = 1.0
 getPhysics(player).g = gravity
 getHealth(player).percent = health
+setBoundingBox(player, {x = 0, y = 0, width = 25, height = 25})
 
 require 'loop'
