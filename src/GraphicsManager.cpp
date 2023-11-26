@@ -55,7 +55,7 @@ namespace {
     };
 }
 
-GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs): gui() {
+GraphicsManager::GraphicsManager(int width, int height, std::string name, bool fs) {
 	windowWidth = width;
 	windowHeight = height;
 	windowName = name;

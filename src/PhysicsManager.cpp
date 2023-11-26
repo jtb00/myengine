@@ -21,20 +21,22 @@ bool PhysicsManager::start()
 
 void PhysicsManager::update()
 {
-	globalEngine.ecs.ForEach<Sprite, Physics>([&](EntityID e)
-											  {
-												  Sprite &s = globalEngine.ecs.Get<Sprite>(e);
-												  Physics &phy = globalEngine.ecs.Get<Physics>(e);
-												  std::chrono::duration<float> delta = std::chrono::steady_clock::now() - phy.lastUpdate;
-												  auto dt = delta.count();
-												  phy.a.y = phy.g;
-												  phy.v.x = phy.v.x + phy.a.x * dt;
-												  phy.v.y = phy.v.y + phy.a.y * dt;
-												  s.xPos = s.xPos + phy.v.x * dt;
-												  s.yPos = s.yPos + phy.v.y * dt;
-												  phy.lastUpdate = std::chrono::steady_clock::now();
-												  // printf("yPos %d\n", s.yPos);
-											  });
+	globalEngine.ecs.ForEach<Sprite, Physics, BoundingBox>([&](EntityID e)
+	{
+		Sprite &s = globalEngine.ecs.Get<Sprite>(e);
+		Physics &phy = globalEngine.ecs.Get<Physics>(e);
+		BoundingBox& b = globalEngine.ecs.Get<BoundingBox>(e);
+		std::chrono::duration<float> delta = std::chrono::steady_clock::now() - phy.lastUpdate;
+		auto dt = delta.count();
+		phy.a.y = phy.g;
+		phy.v.x = phy.v.x + phy.a.x * dt;
+		phy.v.y = phy.v.y + phy.a.y * dt;
+		s.xPos = s.xPos + phy.v.x * dt;
+		s.yPos = s.yPos + phy.v.y * dt;
+		b.x = s.xPos;
+		b.y = s.yPos;
+		phy.lastUpdate = std::chrono::steady_clock::now();
+		});
 	// Check for collisions
 	globalEngine.ecs.ForEach<BoundingBox>([&](EntityID a)
 										  {
@@ -58,7 +60,7 @@ bool PhysicsManager::checkCollision(const BoundingBox &a, const BoundingBox &b)
 
 void PhysicsManager::onCollision(EntityID a, EntityID b)
 {
-	// printf("Collision between %d and %d\n", a, b);
+	printf("Collision between %d and %d\n", a, b);
 	Sprite& spriteA = globalEngine.ecs.Get<Sprite>(a);
 	Sprite& spriteB = globalEngine.ecs.Get<Sprite>(b);
 	if (spriteA.name == "player" || spriteB.name == "player") {

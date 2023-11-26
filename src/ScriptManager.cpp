@@ -161,6 +161,8 @@ bool ScriptManager::start()
 					 { return globalEngine.ecs.Get<Health>(e); });
 	lua.set_function("getScript", [&](EntityID e) -> Script &
 					 { return globalEngine.ecs.Get<Script>(e); });
+	lua.set_function("getBoundingBox", [&](EntityID e) -> BoundingBox&
+					{ return globalEngine.ecs.Get<BoundingBox>(e); });
 	return true;
 }
 
