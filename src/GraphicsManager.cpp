@@ -381,11 +381,6 @@ void GraphicsManager::draw() {
         Sprite& s = globalEngine.ecs.Get<Sprite>(e);
         sprites.push_back(s);
         });
-    int health;
-    globalEngine.ecs.ForEach<Health>([&](EntityID e) {
-        Health& h = globalEngine.ecs.Get<Health>(e);
-        health = h.percent;
-        });
     WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
@@ -421,21 +416,14 @@ void GraphicsManager::draw() {
     }
     wgpuQueueWriteBuffer(wgpuQueue, uniform_buffer, 0, &uniforms, sizeof(Uniforms));
     std::sort(sprites.begin(), sprites.end(), [](const Sprite& lhs, const Sprite& rhs) { return lhs.z > rhs.z; });
-    //This stops sprites from rendering for some reason, probably don't have time to troubleshoot
-    /*
-    ImGuiStyle* style = &ImGui::GetStyle();
-    style->Colors[ImGuiCol_Text] = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
-    */
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove 
-        | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs;
+    //Drawing Dear ImGui elements currently stops sprites from rendering
     
     ImGui_ImplWGPU_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    //ImGui::SetNextWindowBgAlpha(0.0);
-    ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
-    ImGui::Begin("", NULL, flags);
-    ImGui::Text("Health: %d", health);
+    
+    ImGui::Begin("Hello, world!");
+    ImGui::Text("This is some useful text.");
     ImGui::End();
     
     int i = 0;
