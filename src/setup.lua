@@ -18,19 +18,21 @@ getSprite(player).scale = 25.0
 getSprite(player).z = 1.0
 getPhysics(player).g = gravity
 getHealth(player).percent = health
+scale = getSprite(player).scale/100.0
 getBoundingBox(player).x = 0
 getBoundingBox(player).y = 0
-getBoundingBox(player).width = 25
-getBoundingBox(player).height = 25
+getBoundingBox(player).width = math.floor(getWidth("square") * scale)
+getBoundingBox(player).height = math.floor(getHeight("square") * scale)
 
 getSprite(img).name = "test"
 getSprite(img).xPos = 0
 getSprite(img).yPos = 0
 getSprite(img).scale = 25.0
 getSprite(img).z = 2.0
+scale = getSprite(img).scale/100.0
 getBoundingBox(img).x = 0
 getBoundingBox(img).y = 0
-getBoundingBox(img).width = 25
-getBoundingBox(img).height = 25
+getBoundingBox(img).width = math.floor(getWidth("test") * scale)
+getBoundingBox(img).height = math.floor(getHeight("test") * scale)
 
 require 'loop'
