@@ -381,11 +381,13 @@ void GraphicsManager::draw() {
         Sprite& s = globalEngine.ecs.Get<Sprite>(e);
         sprites.push_back(s);
         });
+    
     int health;
     globalEngine.ecs.ForEach<Health>([&](EntityID e) {
         Health& h = globalEngine.ecs.Get<Health>(e);
         health = h.percent;
         });
+        
     WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
     .usage = WGPUBufferUsage_CopyDst | WGPUBufferUsage_Vertex,
     .size = sizeof(InstanceData) * sprites.size()
@@ -433,9 +435,14 @@ void GraphicsManager::draw() {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     //ImGui::SetNextWindowBgAlpha(0.0);
-    ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+    //ImGui::SetNextWindowPos(ImVec2(0.0, 0.0));
+    /*
+    ImGui::Begin("Hello World!");
+    ImGui::Text("This is some useful text.");
+    */
     ImGui::Begin("", NULL, flags);
     ImGui::Text("Health: %d", health);
+    
     ImGui::End();
     
     int i = 0;
