@@ -1,12 +1,16 @@
 xBound = 170
 yBound = 90
 speed = 10
-jumpForce = 150
+jumpForce = 200
 gravity = -500
 flip = false
 
 health = 3
 health2 = 1
+
+spikeTimer = 100
+spikeManTimer = 10
+flyManTimer = 10
 
 player = createEntity()
 platform1 = createEntity()
@@ -54,10 +58,10 @@ getBoundingBox(player).height = math.floor(getHeight("bunny") * scale)
 
 getSprite(enemy1).name = "spikeMan"
 getSprite(enemy1).xPos = 50
-getSprite(enemy1).yPos = 0
+getSprite(enemy1).yPos = -yBound
 getSprite(enemy1).scale = 10.0
 getSprite(enemy1).z = 1.0
-getPhysics(enemy1).g = gravity
+--getPhysics(enemy1).g = gravity
 getHealth(enemy1).percent = health2
 scale = getSprite(enemy1).scale/100.0
 getBoundingBox(enemy1).x = 0
@@ -70,7 +74,7 @@ getSprite(enemy2).xPos = 100
 getSprite(enemy2).yPos = 0
 getSprite(enemy2).scale = 10.0
 getSprite(enemy2).z = 1.0
-getPhysics(enemy2).g = gravity
+--getPhysics(enemy2).g = gravity
 getHealth(enemy2).percent = health2
 scale = getSprite(enemy2).scale/100.0
 getBoundingBox(enemy2).x = 0
@@ -79,11 +83,11 @@ getBoundingBox(enemy2).width = math.floor(getWidth("flyMan") * scale)
 getBoundingBox(enemy2).height = math.floor(getHeight("flyMan") * scale)
 
 getSprite(obstacle1).name = "spike1"
-getSprite(obstacle1).xPos = 0
-getSprite(obstacle1).yPos = 0
+getSprite(obstacle1).xPos = 50
+getSprite(obstacle1).yPos = -yBound
 getSprite(obstacle1).scale = 10.0
 getSprite(obstacle1).z = 1.0
-getPhysics(obstacle1).g = gravity
+--getPhysics(obstacle1).g = gravity
 scale = getSprite(obstacle1).scale/100.0
 getBoundingBox(obstacle1).x = 0
 getBoundingBox(obstacle1).y = 0
@@ -91,11 +95,11 @@ getBoundingBox(obstacle1).width = math.floor(getWidth("spike1") * scale)
 getBoundingBox(obstacle1).height = math.floor(getHeight("spike1") * scale)
 
 getSprite(obstacle2).name = "spike2"
-getSprite(obstacle2).xPos = 0
-getSprite(obstacle2).yPos = 0
+getSprite(obstacle2).xPos = -50
+getSprite(obstacle2).yPos = -yBound
 getSprite(obstacle2).scale = 10.0
 getSprite(obstacle2).z = 1.0
-getPhysics(obstacle2).g = gravity
+--getPhysics(obstacle2).g = gravity
 scale = getSprite(obstacle2).scale/100.0
 getBoundingBox(obstacle2).x = 0
 getBoundingBox(obstacle2).y = 0

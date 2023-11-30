@@ -387,7 +387,7 @@ void GraphicsManager::draw() {
         });
     
     int health;
-    globalEngine.ecs.ForEach<Health>([&](EntityID e) {
+    globalEngine.ecs.ForEach<Physics, Health>([&](EntityID e) {
         Health& h = globalEngine.ecs.Get<Health>(e);
         health = h.percent;
         });

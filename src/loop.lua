@@ -15,6 +15,7 @@ if flip then
 	if isKeyPressed(KEYBOARD.DOWN) and getSprite(player).yPos >= yBound then
 		getPhysics(player).g = gravity
 		flip = false
+		--getSprite(player).scale = -scale
 	end
 	if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos >= yBound then
 		getPhysics(player).v.y = getPhysics(player).v.y - jumpForce
@@ -24,9 +25,20 @@ else
 	if isKeyPressed(KEYBOARD.UP) and getSprite(player).yPos <= -yBound then
 		getPhysics(player).g = -gravity
 		flip = true
+		--getSprite(player).scale = -scale
 	end
 	if isKeyPressed(KEYBOARD.SPACE) and getSprite(player).yPos <= -yBound then
 		getPhysics(player).v.y = getPhysics(player).v.y + jumpForce
 		playSound("boing")
 	end
 end
+
+spikeTimer = spikeTimer - 1
+spikeManTimer = spikeManTimer - 1
+flyManTimer = flyManTimer - 1
+
+if spikeTimer == 0 then
+	getSprite(enemy1).xPos = xBound
+	spikeTimer = 100
+end	
+getSprite(enemy1).xPos = getSprite(enemy1).xPos - 1
