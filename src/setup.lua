@@ -27,6 +27,7 @@ background = createEntity()
 obstacle1 = createEntity()
 obstacle2 = createEntity()
 gameOver = createEntity()
+score = createEntity()
 
 loadImg("bunny", "assets/bunny_stand.png")
 loadImg("background1", "assets/background.png")
@@ -114,5 +115,6 @@ getSprite(gameOver).yPos = 0
 getSprite(gameOver).scale = 0.0
 getSprite(gameOver).z = 1.0
 
+getScore(score).value = 0
 
 require 'loop'

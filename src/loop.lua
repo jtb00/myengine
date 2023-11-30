@@ -44,20 +44,24 @@ flyManTimer = flyManTimer - 1
 if spikeTimer == 0 then
 	getSprite(obstacle1).xPos = xBound + 10
 	spikeTimer = 350
+	--getScore(score).value = getScore(score).value + 1
 end	
 if spikeManTimer == 0 then
 	getSprite(enemy1).xPos = -xBound - 10
 	spikeManTimer = 250
+	--getScore(score).value = getScore(score).value + 1
 end	
 if flyManTimer == 0 then
 	getSprite(enemy2).xPos = -xBound - 10
 	flyManTimer = 250
+	--getScore(score).value = getScore(score).value + 1
 end
 if getSprite(obstacle2).xPos < -xBound - 10 then
 	rand = randInt() % 250
 	if rand == 1 then
 		getSprite(obstacle2).xPos = xBound + 10
 	end
+	--getScore(score).value = getScore(score).value + 1
 end
 getSprite(enemy1).xPos = getSprite(enemy1).xPos + spikeManSpeed
 getSprite(obstacle1).xPos = getSprite(obstacle1).xPos - spikeSpeed

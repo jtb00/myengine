@@ -386,10 +386,10 @@ void GraphicsManager::draw() {
         sprites.push_back(s);
         });
     
-    int health;
-    globalEngine.ecs.ForEach<Physics, Health>([&](EntityID e) {
-        Health& h = globalEngine.ecs.Get<Health>(e);
-        health = h.percent;
+    int score;
+    globalEngine.ecs.ForEach<Score>([&](EntityID e) {
+        Score& s = globalEngine.ecs.Get<Score>(e);
+        score = s.value;
         });
         
     WGPUBufferRef instance_buffer = wgpuDeviceCreateBuffer(wgpuDevice, to_ptr<WGPUBufferDescriptor>({
@@ -445,7 +445,7 @@ void GraphicsManager::draw() {
     ImGui::Text("This is some useful text.");
     */
     ImGui::Begin("", NULL, flags);
-    ImGui::Text("Health: %d", health);
+    ImGui::Text("Score: %d", score);
     
     ImGui::End();
     

@@ -163,6 +163,8 @@ bool ScriptManager::start()
 					 { return globalEngine.ecs.Get<Script>(e); });
 	lua.set_function("getBoundingBox", [&](EntityID e) -> BoundingBox&
 					{ return globalEngine.ecs.Get<BoundingBox>(e); });
+	lua.set_function("getScore", [&](EntityID e) -> Score&
+					{ return globalEngine.ecs.Get<Score>(e); });
 	lua.set_function("getWidth", [&](const std::string& name)
 					{ return globalEngine.graphics.nameToImage.at(name).width; });
 	lua.set_function("getHeight", [&](const std::string& name)

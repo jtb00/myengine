@@ -71,7 +71,7 @@ void PhysicsManager::onCollision(EntityID a, EntityID b)
 		spriteA.name == "bunny" && spriteB.name == "spike2" || 
 		spriteA.name == "bunny" && spriteB.name == "spikeMan" || 
 		spriteA.name == "bunny" && spriteB.name == "flyMan" ) {
-		printf("Collision between %s and %s\n", spriteA.name, spriteB.name);
+		//printf("Collision between %s and %s\n", spriteA.name, spriteB.name);
 		spriteA.scale = 0;
 		Sprite& gameOver = globalEngine.ecs.Get<Sprite>(a);
 		globalEngine.ecs.ForEach<Sprite>([&](EntityID e) {
