@@ -33,9 +33,14 @@ void PhysicsManager::update()
 		phy.v.y = phy.v.y + phy.a.y * dt;
 		s.xPos = s.xPos + phy.v.x * dt;
 		s.yPos = s.yPos + phy.v.y * dt;
-		b.x = s.xPos;
-		b.y = s.yPos;
 		phy.lastUpdate = std::chrono::steady_clock::now();
+		});
+	globalEngine.ecs.ForEach<Sprite, BoundingBox>([&](EntityID e)
+		{
+			Sprite& s = globalEngine.ecs.Get<Sprite>(e);
+			BoundingBox& b = globalEngine.ecs.Get<BoundingBox>(e);
+			b.x = s.xPos;
+			b.y = s.yPos;
 		});
 	// Check for collisions
 	globalEngine.ecs.ForEach<BoundingBox>([&](EntityID a)
@@ -60,12 +65,23 @@ bool PhysicsManager::checkCollision(const BoundingBox &a, const BoundingBox &b)
 
 void PhysicsManager::onCollision(EntityID a, EntityID b)
 {
-	printf("Collision between %d and %d\n", a, b);
 	Sprite& spriteA = globalEngine.ecs.Get<Sprite>(a);
 	Sprite& spriteB = globalEngine.ecs.Get<Sprite>(b);
-	if (spriteA.name == "player" || spriteB.name == "player") {
-		globalEngine.sound.playSound("boing.wav");
-		// addition logic to update health bla bla bla
+	if (spriteA.name == "bunny" && spriteB.name == "spike1" ||
+		spriteA.name == "bunny" && spriteB.name == "spike2" || 
+		spriteA.name == "bunny" && spriteB.name == "spikeMan" || 
+		spriteA.name == "bunny" && spriteB.name == "flyMan" ) {
+		printf("Collision between %s and %s\n", spriteA.name, spriteB.name);
+		spriteA.scale = 0;
+		Sprite& gameOver = globalEngine.ecs.Get<Sprite>(a);
+		globalEngine.ecs.ForEach<Sprite>([&](EntityID e) {
+			if (globalEngine.ecs.Get<Sprite>(e).name == "gameOver") {
+				gameOver = globalEngine.ecs.Get<Sprite>(e);
+			}
+		});
+		gameOver.scale = 100.0;
+		
+
 	}
 
 }

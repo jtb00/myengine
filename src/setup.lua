@@ -8,21 +8,17 @@ flip = false
 health = 3
 health2 = 1
 
-spikeTimer = 100
-spikeManTimer = 10
-flyManTimer = 10
+cooldown = 20
+
+spikeTimer = 350
+spikeManTimer = 250
+flyManTimer = 250
+
+spikeSpeed = 1
+spikeManSpeed = 2
+flyManSpeed = 3
 
 player = createEntity()
-platform1 = createEntity()
-platform2 = createEntity()
-platform3 = createEntity()
-platform4 = createEntity()
-platform5 = createEntity()
-platform6 = createEntity()
-platform7 = createEntity()
-platform8 = createEntity()
-platform9 = createEntity()
-platform10 = createEntity()
 enemy1 = createEntity()
 enemy2 = createEntity()
 enemy3 = createEntity()
@@ -30,16 +26,15 @@ enemy4 = createEntity()
 background = createEntity()
 obstacle1 = createEntity()
 obstacle2 = createEntity()
+gameOver = createEntity()
 
 loadImg("bunny", "assets/bunny_stand.png")
-loadImg("ground_grass", "assets/ground_grass.png")
 loadImg("background1", "assets/background.png")
 loadImg("spikeMan", "assets/spikeMan_stand.png")
 loadImg("flyMan", "assets/flyMan_still_stand.png")
-loadImg("ground_stone", "assets/ground_stone.png")
-loadImg("ground_wood", "assets/ground_wood.png")
 loadImg("spike1", "assets/spike.png")
 loadImg("spike2", "assets/spikes.png")
+loadImg("gameOver", "assets/gameover.png")
 
 loadSound("boing", "assets/boing.wav")
 
@@ -49,7 +44,7 @@ getSprite(player).yPos = 0
 getSprite(player).scale = 10.0
 getSprite(player).z = 1.0
 getPhysics(player).g = gravity
-getHealth(player).percent = health
+getHealth(player).percent = 1.0
 scale = getSprite(player).scale/100.0
 getBoundingBox(player).x = 0
 getBoundingBox(player).y = 0
@@ -71,7 +66,7 @@ getBoundingBox(enemy1).height = math.floor(getHeight("spikeMan") * scale)
 
 getSprite(enemy2).name = "flyMan"
 getSprite(enemy2).xPos = 100
-getSprite(enemy2).yPos = 0
+getSprite(enemy2).yPos = yBound - 10
 getSprite(enemy2).scale = 10.0
 getSprite(enemy2).z = 1.0
 --getPhysics(enemy2).g = gravity
@@ -96,8 +91,8 @@ getBoundingBox(obstacle1).height = math.floor(getHeight("spike1") * scale)
 
 getSprite(obstacle2).name = "spike2"
 getSprite(obstacle2).xPos = -50
-getSprite(obstacle2).yPos = -yBound
-getSprite(obstacle2).scale = 10.0
+getSprite(obstacle2).yPos = yBound + 5
+getSprite(obstacle2).scale = -10.0
 getSprite(obstacle2).z = 1.0
 --getPhysics(obstacle2).g = gravity
 scale = getSprite(obstacle2).scale/100.0
@@ -112,10 +107,12 @@ getSprite(background).yPos = 0
 getSprite(background).scale = 200.0
 getSprite(background).z = 3.0
 scale = getSprite(background).scale/100.0
-getBoundingBox(background).x = 0
-getBoundingBox(background).y = 0
-getBoundingBox(background).width = math.floor(getWidth("background1") * scale)
-getBoundingBox(background).height = math.floor(getHeight("background1") * scale)
+
+getSprite(gameOver).name = "gameOver"
+getSprite(gameOver).xPos = 0
+getSprite(gameOver).yPos = 0
+getSprite(gameOver).scale = 0.0
+getSprite(gameOver).z = 1.0
 
 
 require 'loop'

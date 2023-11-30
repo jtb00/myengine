@@ -167,6 +167,8 @@ bool ScriptManager::start()
 					{ return globalEngine.graphics.nameToImage.at(name).width; });
 	lua.set_function("getHeight", [&](const std::string& name)
 					{ return globalEngine.graphics.nameToImage.at(name).height; });
+	lua.set_function("randInt", [&](void)
+					{ return rand(); });
 	return true;
 }
 
