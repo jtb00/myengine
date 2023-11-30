@@ -2,6 +2,9 @@
 
 #include <typeindex>
 #include "Types.h"
+#include <unordered_map>
+#include <vector>
+
 
 typedef long EntityID;
 

@@ -69,3 +69,38 @@ void PhysicsManager::onCollision(EntityID a, EntityID b)
 	}
 
 }
+
+/*const float BASE_SPRITE_HEIGHT = 50.0; // Base height of a sprite before scaling
+
+void PhysicsManager::onCollision(EntityID a, EntityID b)
+{
+    printf("Collision between %d and %d\n", a, b);
+    Sprite& spriteA = globalEngine.ecs.Get<Sprite>(a);
+    Sprite& spriteB = globalEngine.ecs.Get<Sprite>(b);
+    Physics& phyA = globalEngine.ecs.Get<Physics>(a);
+    Physics& phyB = globalEngine.ecs.Get<Physics>(b);
+
+    // Calculate the height of the sprites based on their scale
+    float heightA = BASE_SPRITE_HEIGHT * spriteA.scale;
+    float heightB = BASE_SPRITE_HEIGHT * spriteB.scale;
+
+    // Check for player and ground collision
+    if ((spriteA.name == "player" && spriteB.name == "ground_grass") ||
+        (spriteB.name == "player" && spriteA.name == "ground_grass")) {
+        // Handle collision with ground
+        if (spriteA.name == "player") {
+            phyA.v.y = 0;
+            spriteA.yPos = spriteB.yPos + heightB; // Position player on top of ground
+        }
+        if (spriteB.name == "player") {
+            phyB.v.y = 0;
+            spriteB.yPos = spriteA.yPos + heightA;
+        }
+        globalEngine.sound.playSound("land.wav");
+    }
+    else if (spriteA.name == "player" || spriteB.name == "player") {
+        globalEngine.sound.playSound("boing.wav");
+        // Additional logic for other collisions
+    }
+}
+*/

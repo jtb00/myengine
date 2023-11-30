@@ -71,6 +71,10 @@ bool GraphicsManager::start() {
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	// Create the window.
+    // make screen size 1280x720
+    windowWidth = 1280;
+    windowHeight = 720;
+
 	window = glfwCreateWindow( windowWidth, windowHeight, windowName.c_str(), fullscreen ? glfwGetPrimaryMonitor() : 0, 0 );
 	glfwSetWindowAspectRatio( window, windowWidth, windowHeight );
 	if( !window ) {
